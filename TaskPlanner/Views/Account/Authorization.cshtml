@@ -1,0 +1,62 @@
+﻿@model AuthorizationViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    .input-form .link{
+          color: #F0BC5E;
+          background: none;
+          font-family: 'Arial', sans-serif;
+          margin-top: 10px;
+      }
+      .container {
+           margin: 25px;
+           position: relative;
+         }
+         
+         .child {
+           width: 400px;
+           position: absolute;
+           top: 30%;
+           left: 50%;
+           margin-top: 50px;
+         }
+         
+         .child-child{
+          margin-top: 10px;
+         }
+</style>
+
+<div class="container">
+    <form class="form-signin" asp-action="Authorization" asp-controller="Account" asp-antiforgery="true">
+        <div class="child">
+            
+            <div class="child-child">
+                <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>
+            </div>
+            
+            <!-- Email input -->
+            <div class="child-child">
+                <input class="form-control" asp-for="Email" type="email" placeholder="Почта"/>
+                <span asp-validation-for="Email"/>
+            </div>
+
+            <!-- Password input -->
+            <div class="child-child">
+                <input class="form-control" asp-for="Password" type="password" placeholder="Пароль"/>
+                <span asp-validation-for="Password"/>
+            </div>
+
+            <div class="child-child">
+                  <button class="btn btn-primary btn-lg mt-6" type="submit">Войти</button>
+            </div>
+            
+            <div class="child-child">
+                <a class="link" asp-action="Registration" asp-controller="Account">Регистрация</a>
+            </div>
+        </div>
+    </form>
+</div>
+

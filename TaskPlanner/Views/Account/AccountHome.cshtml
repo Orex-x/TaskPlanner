@@ -1,0 +1,55 @@
+﻿@model AccountHomeViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<body class="text-center" style="margin-bottom: 100px">
+<div class="panel" style="margin-top: 50px">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form action="" enctype="multipart/form-data" method="post">
+                    <div class="user-photo">
+                        <div class="user-photo__img-wrap img-plug">
+                            <img width="64" height="64" alt="User avatar" src="//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-8">
+                <h2 class="personal-data__header">
+                    <span>@Model.User.SecondName @Model.User.FirstName @Model.User.LastName</span>
+                </h2>
+            </div>
+            <div class="col">
+                <div class="right">
+                    <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Logout">
+                        <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">
+                            Выйти
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="margin-top-40">
+            <div class="row">
+                <div class="col">
+                    <h3 class="personal-data__data-title">Email</h3>
+                    <p class="personal-data__data">@Model.User.Email</p>
+                </div>
+                <div class="col">
+                    <h3 class="personal-data__data-title">Логин</h3>
+                    <p class="personal-data__data">@Model.User.Login</p>
+                </div>
+                <div class="col">
+                    <h3 class="personal-data__data-title">Телефон</h3>
+                    <p class="personal-data__data">@Model.User.Phone</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

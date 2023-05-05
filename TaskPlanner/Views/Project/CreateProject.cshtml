@@ -1,0 +1,32 @@
+﻿@model CreateProjectViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <form asp-action="CreateProject" asp-controller="Project" asp-anti-forgery="true">
+        <div class="child">
+               
+            <input type="hidden" asp-for="IdUserGroup"/>
+            <input type="hidden" asp-for="IdGroup"/>
+            
+            <div class="child-child" style="margin-top: 10px">
+                <h1 class="h3 mb-3 font-weight-normal">Создание проекта</h1>
+            </div>
+               
+            <div class="child-child" style="margin-top: 10px">
+                <input asp-for="Project.Name" type="text" class="form-control" placeholder="Имя" />
+            </div>
+               
+            <div class="child-child" style="margin-top: 10px">
+                <input asp-for="Project.Description" type="text" class="form-control" placeholder="Описание" />
+            </div>
+               
+            <div class="child-child" style="margin-top: 10px">
+                <button class="btn btn-primary btn-lg mt-6" type="submit">Создать проект</button>
+            </div>
+        </div>
+    </form>
+</div>
+

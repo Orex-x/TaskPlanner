@@ -1,0 +1,30 @@
+﻿@model CreateGroupViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+   <form asp-action="CreateGroup" asp-controller="Group" asp-anti-forgery="true">
+           <div class="child">
+               
+               <div class="child-child" style="margin-top: 10px">
+                   <h1 class="h3 mb-3 font-weight-normal">Добавление группы</h1>
+               </div>
+               
+               <div class="child-child" style="margin-top: 10px">
+                   <input asp-for="Group.Name" type="text" class="form-control" placeholder="Имя" />
+               </div>
+               
+               <div class="child-child" style="margin-top: 10px">
+                   <input asp-for="Group.Description" type="text" class="form-control" placeholder="Описание" />
+               </div>
+               
+               <div class="child-child" style="margin-top: 10px">
+                   <button class="btn btn-primary btn-lg mt-6" type="submit">Создать группу</button>
+               </div>
+           </div>
+   </form>
+</div>
+
+

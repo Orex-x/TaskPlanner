@@ -1,0 +1,126 @@
+﻿@model GroupPageViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<h3 class="personal-data__data-title" style="margin-top: 50px; margin-bottom: 50px">@Model.UserGroup.Group.Name</h3>
+
+
+@{
+    if (Model.UserGroup.IsAdmin)
+    {
+        <div class="row" style="text-align: left">
+            <div class="col">
+                <a class="nav-link text-light" asp-area="" 
+                   asp-route-idUserGroup="@Model.UserGroup.Id"
+                   asp-route-idGroup="@Model.UserGroup.Group.Id" asp-controller="Project" asp-action="CreateProject">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                        Создать проект
+                    </button>
+                </a>
+            </div>
+            <div class="col">
+                <a class="nav-link text-light" asp-route-id="@Model.UserGroup.Group.Id"
+                   asp-route-admin="@Model.UserGroup.IsAdmin" asp-controller="Group" asp-action="UsersInGroup">
+                    
+                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">
+                        Список пользователей
+                    </button>
+                </a>
+            </div>
+            <div class="col">
+                <a class="nav-link text-light" asp-area="" asp-route-id="@Model.UserGroup.Id" asp-controller="Group" asp-action="DeleteGroup">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">
+                        Удалить группу
+                    </button>
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col">
+            <a class="nav-link text-light" asp-route-id="@Model.UserGroup.Group.Id"
+               asp-route-admin="@Model.UserGroup.IsAdmin" asp-controller="Group" asp-action="UsersInGroup">
+                
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">
+                    Список пользователей
+                </button>
+            </a>
+        </div>
+        
+        <div class="col">
+            <a class="nav-link text-light" asp-area="" asp-route-id="@Model.UserGroup.Id" asp-controller="Group" asp-action="RemoveUserGroup">
+                <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">
+                    Выйти из группы
+                </button>
+            </a>
+        </div>
+    }
+}
+
+<h3 class="personal-data__data-title" style="margin-top: 50px; margin-bottom: 50px">Проекты</h3>
+
+@{
+    if (Model.UserGroup.Group.Projects.Count > 0)
+    {
+         foreach (var item in Model.UserGroup.Group.Projects)
+    {
+        <div class="card" style="border-radius: 25px; margin-top: 10px">
+            <div>
+                <div class="card-body" style="text-align-all: center">
+                    <div>
+                        <div class="row">
+                            
+                            <div class="col" style="width: 50px">
+                                <div class="row">
+                                     <h5 class="card-title" style="text-align: left;">@item.Name</h5>
+                                </div>
+                                
+                                <div class="row">
+                                    <p class="card-title" style="text-align: left;">@item.Description</p>                        
+                                </div>
+                            </div>
+
+                            @{
+                                if (Model.UserGroup.IsAdmin)
+                                {
+                                    <div class="col">
+                                        <a asp-area="" asp-route-idProject="@item.Id" asp-route-IdUserGroup="@Model.UserGroup.Id"
+                                           asp-controller="Project" asp-action="RemoveProject">
+                                            
+                                            <button class="btn btn-danger" type="submit">
+                                                Удалить проект
+                                            </button>
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            
+                            <div class="col">
+                                <a asp-area=""
+                                   asp-route-idProject="@item.Id"
+                                   asp-route-idGroup="@Model.UserGroup.Group.Id"
+                                   asp-route-isAdmin="@Model.UserGroup.IsAdmin"
+                                   asp-controller="Project" asp-action="MainProjectPage">
+                                    <button class="btn btn-primary" type="submit">
+                                        Перейти к задачам проекта
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    }
+    else
+    {
+        <h5 class="personal-data__data-title" style="margin-top: 40px; margin-left: 15px">В группе еще нет проектов</h5>
+    }
+   
+}
+

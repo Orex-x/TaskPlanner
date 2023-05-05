@@ -1,0 +1,79 @@
+﻿@model UsersInGroupViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function() {
+            
+            $(".btn-link").on("click", function() {
+                
+                  var textarea = document.createElement("textarea");
+                  textarea.value = '@Model.InviteLink';
+                  document.body.appendChild(textarea);
+                  textarea.select();
+                  document.execCommand("copy");
+                  document.body.removeChild(textarea);
+                  
+            });
+        });
+    </script>
+}
+
+
+@if (Model.IsAdmin)
+{
+    <button class="btn btn-outline-success my-2 my-sm-0 btn-link" type="submit">  
+        Скопировать ссылку для приглашения
+    </button>
+}
+
+@{
+    foreach (var item in Model.UserGroups)
+    {
+        <div class="card" style="border-radius: 25px; margin-top: 20px">
+            <div>
+                <div class="card-body" style="text-align-all: center">
+                    <div>
+                        <div class="row">
+                            <div class="col" style="width: 50px">
+                                <div class="user-photo">
+                                    <div class="user-photo__img-wrap img-plug">
+                                        <img width="64" height="64" alt="User avatar" src="//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <h5 class="card-title" style="text-align: left;">@item.User.FirstName @item.User.SecondName @item.User.LastName</h5>
+                            </div>
+
+                            @{
+                                if (Model.IsAdmin)
+                                {
+                                    <div class="col">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" checked="@item.IsAdmin">
+                                            <label class="form-check-label" for="flexSwitchCheck">Админ</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <a asp-area="" asp-route-id="@item.Id" asp-controller="Group" asp-action="RemoveUserGroup">
+                                            <button class="btn btn-primary" type="submit">
+                                                Изгнать из группы
+                                            </button>
+                                        </a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

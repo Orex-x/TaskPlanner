@@ -1,0 +1,94 @@
+﻿@model AllMTasksViewModel
+
+ 
+<h3 class="personal-data__data-title" style="margin-top: 50px; margin-bottom: 50px">Все задачи</h3>
+
+@{
+    int groupingsNewProducts = 2;
+    var groupedNewProducts = Model.MTasks
+      .Select((x, i) =>
+        new
+        {
+          x, i = i / groupingsNewProducts
+        })
+      .GroupBy(x => x.i, x => x.x);
+  }
+
+@{
+    if (Model.MTasks.Count > 0)
+    {
+          @foreach (var items in groupedNewProducts)
+          {
+              <div class="row" style="margin-top: 20px">
+                  @foreach (var item in items)
+                  {
+                      <div class="col">
+
+                          <div class="card" style="width: 30rem; border-radius: 25px">
+                              <div style="margin: 5px">
+                                  <div class="row row-cols-auto">
+                                      <div class="col">
+                                          <div class="left" style="margin-right: 10px; text-align: left">
+                                              @{
+                                                  switch (item.MTaskPriority)
+                                                  {
+                                                      case MTaskPriority.LOW:
+                                                      {
+                                                          <span class="badge badge-primary" style="width: 80px; height: 20px; margin: 15px">@item.MTaskPriority</span>
+                                                          break;
+                                                      }
+                                                      case MTaskPriority.MEDIUM:
+                                                      {
+                                                          <span class="badge badge-warning" style="width: 80px; height: 20px; margin: 15px">@item.MTaskPriority</span>
+                                                          break;
+                                                      }
+                                                      case MTaskPriority.HIGH:
+                                                      {
+                                                          <span class="badge badge-danger" style="width: 80px; height: 20px; margin: 15px">@item.MTaskPriority</span>
+                                                          break;
+                                                      }
+                                                  }
+                                              }
+                                              <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px">@item.MTaskStatus</span>
+
+                                          </div>
+                                      </div>
+
+
+                                      <div class="col">
+                                          <div class="right" style="margin-right: 10px; text-align: right">
+                                              <h6 class="card-text">Срок сдачи: @item.Deadline.Day.@item.Deadline.Month.@item.Deadline.Year</h6>
+                                              <h6 class="card-text">@item.Deadline.Hour:@item.Deadline.Minute</h6>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="card-body" style="margin-top: 30px;">
+                                      <h5 class="card-title" style="text-align: center;">@item.Title</h5>
+                                      <p class="card-text" style="text-align: left;">@item.Description</p>
+
+
+                                      <div class="row" style="margin-top: 20px;">
+                                          <div class="col-md-5">
+                                              <a asp-area="" asp-route-idTask="@item.Id" asp-controller="MTask" asp-action="MainMTaskPage">
+                                                  <button class="btn btn-primary" type="submit">
+                                                      Перейти к задаче
+                                                  </button>
+                                              </a>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                      </div>
+                  }
+              </div>
+              
+          }
+    }
+    else
+    {
+        <h5 class="personal-data__data-title" style="margin-top: 40px; margin-left: 15px">Задач нету</h5>
+    }
+}

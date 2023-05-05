@@ -1,0 +1,80 @@
+﻿@model RegistrationViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<style>
+    .input-form .link{
+          color: #F0BC5E;
+          background: none;
+          font-family: 'Arial', sans-serif;
+          margin-top: 10px;
+      }
+      .container {
+           margin: 25px;
+           position: relative;
+         }
+         
+         .child {
+           width: 400px;
+           position: absolute;
+           top: 30%;
+           left: 50%;
+           margin-top: 50px;
+         }
+         
+         .child-child{
+          margin-top: 10px;
+         }
+</style>
+
+<div class="container">
+   <form asp-action="Registration" asp-controller="Account" asp-anti-forgery="true">
+           <div class="child">
+               
+               <div class="child-child">
+                   <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+               </div>
+               
+               
+               <div class="child-child">
+                   <input asp-for="FirstName" type="text" class="form-control" placeholder="Имя" />
+               </div>
+
+               <div class="child-child">
+                   <input asp-for="SecondName" class="form-control" placeholder="Фамилия" />
+               </div>
+   
+               <div class="child-child">
+                   <input asp-for="LastName" type="text" class="form-control" placeholder="Отчество" />
+               </div>
+   
+               <div class="child-child">
+                   <input asp-for="Email" type="email" type="text" class="form-control" placeholder="E-mail" />
+               </div>
+   
+               <div class="child-child">
+                   <input asp-for="Login" type="text" class="form-control" placeholder="Логин" />
+               </div> 
+               
+               <div class="child-child">
+                   <input asp-for="Phone" type="text" class="form-control" placeholder="Телефон" />
+               </div>
+   
+               <div class="child-child">
+                   <input asp-for="Password" type="password" class="form-control" placeholder="Пароль" />
+               </div>
+   
+               <div class="child-child">
+                   <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Повтор пароля" />
+               </div>
+   
+               <div class="child-child">
+                   <button class="btn btn-primary btn-lg mt-6" type="submit">Зарегистрироваться</button>
+               </div>
+           </div>
+   </form>
+</div>
+

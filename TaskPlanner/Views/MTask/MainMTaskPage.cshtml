@@ -1,0 +1,91 @@
+﻿@model MainMTaskPageViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<div>
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    Приоритет: <span class="badge badge-info" style="width: 80px; height: 20px; margin-top: -20px">@Model.MTask.MTaskPriority</span>
+                </div>
+                <div class="col">
+                    Статус: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px">@Model.MTask.MTaskStatus</span>
+                </div>
+            </div>
+            <div style="margin-top: 100px">
+                <h1>@Model.MTask.Title</h1>
+                <p>@Model.MTask.Description</p>
+            </div>
+           
+        </div>
+        
+        @*Форма для сдачи*@
+        <div class="col">
+            <div class="col" style="text-align: left">
+                <div class="row">
+                    <h6>Дата сдачи: @Model.MTask.Deadline</h6> 
+                </div>
+                
+                @{
+                    switch (Model.MTask.MTaskStatus)
+                    {
+                        case MTaskStatus.IN_PROGRESS:
+                        {
+                            <div class="row">
+                                <a class="nav-link text-light" asp-area=""
+                                   asp-route-idTask="@Model.MTask.Id"
+                                   asp-route-status="@MTaskStatus.SHIPPED"
+                                   asp-controller="MTask" asp-action="SetMTaskStatus">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                        Отметить как выполненое
+                                    </button>
+                                </a>
+                            </div>
+                            
+                            break;
+                        }
+                        case MTaskStatus.SHIPPED:
+                        {
+                            <div class="row">
+                                <a class="nav-link text-light" asp-area=""
+                                   asp-route-idTask="@Model.MTask.Id"
+                                   asp-route-status="@MTaskStatus.IN_PROGRESS"
+                                   asp-controller="MTask" asp-action="SetMTaskStatus">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                        Отменить отправку
+                                    </button>
+                                </a>
+                            </div>
+                            
+                            break;
+                        }
+                        case MTaskStatus.COMPLETED:
+                        {
+                            <div class="row">
+                                <a class="nav-link text-light" asp-area=""
+                                   asp-route-idTask="@Model.MTask.Id"
+                                   asp-route-status="@MTaskStatus.IN_PROGRESS"
+                                   asp-controller="MTask" asp-action="SetMTaskStatus">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                        Вернуть задачу
+                                    </button>
+                                </a>
+                            </div>
+                            
+                            break;
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

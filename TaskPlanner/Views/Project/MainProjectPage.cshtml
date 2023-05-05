@@ -1,0 +1,124 @@
+﻿@model MainProjectPageViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<h3 class="personal-data__data-title" style="margin-top: 50px; margin-bottom: 50px">@Model.Project.Name</h3>
+
+
+@{
+    if (Model.IsAdmin)
+    {
+        <div class="row" style="text-align: left">
+            <div class="col">
+                <a class="nav-link text-light" 
+                   asp-route-idGroup="@Model.IdGroup"
+                   asp-route-isAdmin="@Model.IsAdmin" 
+                   asp-route-idProject="@Model.Project.Id"
+                   asp-controller="MTask" asp-action="CreateMTask" asp-area="">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                        Создать Задачу
+                    </button>
+                </a>
+            </div>
+        </div>
+    }
+}
+
+@* сортировка *@
+
+@{
+    var orderedEnumerable = Model.Project.MTasks.OrderBy(x => x.MTaskPriority).ToList();
+}
+
+@{
+    int groupingsNewProducts = 2;
+    
+    var groupedNewProducts = Model.Project.MTasks
+      .Select((x, i) =>
+        new
+        {
+          x, i = i / groupingsNewProducts
+        })
+      .GroupBy(x => x.i, x => x.x);
+}
+
+@{
+    if (Model.Project.MTasks.Count > 0)
+    {
+          @foreach (var items in groupedNewProducts)
+          {
+              <div class="row" style="margin-top: 20px">
+                  @foreach (var item in items)
+                  {
+                      <div class="col">
+
+                          <div class="card" style="width: 30rem; border-radius: 25px">
+                              <div style="margin: 5px">
+                                  <div class="row">
+                                      <div class="col">
+                                          <div class="left" style="margin-right: 10px; text-align: left">
+                                              @{
+                                                  switch (item.MTaskPriority)
+                                                  {
+                                                      case MTaskPriority.LOW:
+                                                      {
+                                                          <span class="badge badge-primary" style="width: 80px; height: 20px; margin: 15px">@item.MTaskPriority</span>
+                                                          break;
+                                                      }
+                                                      case MTaskPriority.MEDIUM:
+                                                      {
+                                                          <span class="badge badge-warning" style="width: 80px; height: 20px; margin: 15px">@item.MTaskPriority</span>
+                                                          break;
+                                                      }
+                                                      case MTaskPriority.HIGH:
+                                                      {
+                                                          <span class="badge badge-danger" style="width: 80px; height: 20px; margin: 15px">@item.MTaskPriority</span>
+                                                          break;
+                                                      }
+                                                  }
+                                              }
+                                          </div>
+                                      </div>
+                                      <div class="col">
+                                          <div class="right" style="margin-right: 10px; text-align: right">
+                                              <h6 class="card-text">Срок сдачи: @item.Deadline.Day.@item.Deadline.Month.@item.Deadline.Year</h6>
+                                              <h6 class="card-text">@item.Deadline.Hour:@item.Deadline.Minute</h6>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="card-body" style="margin-top: 30px;">
+                                      <h5 class="card-title" style="text-align: center;">@item.Title</h5>
+                                      <p class="card-text" style="text-align: left;">@item.Description</p>
+
+
+                                      <div class="row" style="margin-top: 20px;">
+                                          <div class="col-md-5">
+                                              <a asp-area="" asp-route-id="@item.Id" asp-controller="Home" asp-action="Index">
+                                                  <button class="btn btn-primary" type="submit">
+                                                      Перейти к задаче
+                                                  </button>
+                                              </a>
+                                          </div>
+                                          <div class="col-md-auto">
+                                              <a asp-action="Authorization" asp-controller="Account" class="btn btn-light btn-favorite">
+                                                  ♥
+                                              </a>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  }
+              </div>
+          }
+    }
+    else
+    {
+        <h5 class="personal-data__data-title" style="margin-top: 40px; margin-left: 15px">Задач нету</h5>
+    }
+}

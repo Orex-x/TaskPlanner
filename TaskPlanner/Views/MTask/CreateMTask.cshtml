@@ -1,0 +1,93 @@
+﻿@model CreateMTaskViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <form asp-action="CreateMTask" asp-controller="MTask" asp-anti-forgery="true">
+        <div class="child">
+
+            <input type="hidden" asp-for="idProject"/>
+            <input type="hidden" asp-for="SelectedUsers"/>
+            
+
+            <div class="child-child" style="margin-top: 10px">
+                <h1 class="h3 mb-3 font-weight-normal">Создание задачи</h1>
+            </div>
+
+            <div class="child-child" style="margin-top: 10px">
+                <input asp-for="MTask.Title" type="text" class="form-control" placeholder="Наименование" />
+            </div>
+
+            <div class="child-child" style="margin-top: 10px">
+                <input asp-for="MTask.Description" type="text" class="form-control" placeholder="Описание" />
+            </div>
+
+            <div class="child-child" style="margin-top: 10px">
+                <input asp-for="MTask.Deadline" type="datetime-local" class="form-control" placeholder="Срок сдачи" />
+            </div>
+
+
+            <select asp-for="MTask.MTaskPriority" style="margin-top: 10px" class="form-select" aria-label="Default select example">
+                <option selected>Выберите приоритет задачи</option>
+                @{
+                    foreach (var item in Enum.GetValues(typeof(MTaskPriority)))
+                    {
+                        <option>@item</option>
+                    }
+                }
+            </select>
+
+
+            @*В обшем багуля какая та хз, без этого куска он нижнюю форму не отображает как надо (по нажатью кнопки)
+            а отображает сразу всю форму *@
+
+            <div class="dropdown" type="hidden">
+
+            </div>
+
+
+            <div class="dropdown" style="margin-top: 10px">
+                <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    Исполнители задачи
+                </button>
+                <div class="dropdown-menu p-4 overflow-auto" style="height: 400px">
+                    @{
+                        foreach (var item in Model.SelectedUsers)
+                        {
+                            <div class="card" style="border-radius: 10px; margin-top: 5px">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="user-photo">
+                                                <div class="user-photo__img-wrap img-plug">
+                                                    <img width="32" height="32" alt="User avatar" src="//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2">
+                                                </div>
+                                            </div>
+                                            <p class="card-title" style="text-align: left; margin-top: 10px">@item.Key</p>
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" 
+                                                       asp-for="@Model.SelectedUsers[item.Key]" type="checkbox" 
+                                                       value="@Model.SelectedUsers[item.Key]" id="defaultCheck">
+                                                <label class="form-check-label" for="defaultCheck">
+                                                    Исполняет задачу
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>   
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="child-child" style="margin-top: 30px">
+                <button class="btn btn-primary btn-lg mt-6" type="submit">Создать проект</button>
+            </div>
+        </div>
+    </form>
+</div>
+
