@@ -11,6 +11,7 @@ public class User
     public string Password { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }
+    public string PathToAvatar { get; set; }
     
     public virtual ICollection<MTask> MTasks { get; set; } = new List<MTask>();
 }

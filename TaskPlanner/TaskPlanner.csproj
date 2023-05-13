@@ -10,4 +10,12 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0-preview.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\uploads\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="wwwroot\uploads\d3c217d9-acc1-4729-ad2e-af3663f6bd54.jpg" />
+    </ItemGroup>
+
 </Project>

@@ -56,16 +56,20 @@
                     @{
                         foreach (var item in Model.SelectedUsers)
                         {
+                            var array = item.Key.Split(":");
+                            var email = array[0];
+                            var avatar = array[1];
+                            
                             <div class="card" style="border-radius: 10px; margin-top: 5px">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
                                             <div class="user-photo">
                                                 <div class="user-photo__img-wrap img-plug">
-                                                    <img width="32" height="32" alt="User avatar" src="//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2">
+                                                    <img width="64" height="64" style="border-radius: 50%" alt="User avatar"  src="@Url.Content(avatar)">
                                                 </div>
                                             </div>
-                                            <p class="card-title" style="text-align: left; margin-top: 10px">@item.Key</p>
+                                            <h6 class="card-title" style="text-align: left; margin-top: 10px">@email</h6>
 
                                             <div class="form-check">
                                                 <input class="form-check-input" 

@@ -58,7 +58,8 @@ public class AccountController : Controller
                 LastName = model.LastName,
                 Login = model.Login,
                 Email = model.Email,
-                Phone = model.Phone
+                Phone = model.Phone,
+                PathToAvatar = "//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2",
             };
             
             user.Password = hasher.HashPassword(user, model.Password);
@@ -109,6 +110,34 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("AccountHome", "Account");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UploadAvatar(IFormFile uploadedFile)
+    {
+        if (uploadedFile != null && uploadedFile.Length > 0)
+        {
+            // Генерируем уникальное имя файла
+            var fileName = Guid.NewGuid() + Path.GetExtension(uploadedFile.FileName);
+
+            // Создаем путь для сохранения файла
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads", fileName);
+
+            // Копируем содержимое файла в указанный поток
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await uploadedFile.CopyToAsync(stream);
+            }
+            
+            var email = User.Identity?.Name;
+            var user = _context.Users.FirstOrDefault(x => x.Email == email);
+            user!.PathToAvatar = $"~/uploads/{fileName}";
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+        }
+
         return RedirectToAction("AccountHome", "Account");
     }
 }

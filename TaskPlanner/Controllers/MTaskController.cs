@@ -29,7 +29,7 @@ public class MTaskController : Controller
         await users.ForEachAsync(user =>
         {
             if (user.Email != email)
-                selectedUsers.Add(user.Email, true);
+                selectedUsers.Add(string.Join(":", new string[] {user.Email, user.PathToAvatar}), true);
         });
 
         var model = new CreateMTaskViewModel
@@ -50,7 +50,6 @@ public class MTaskController : Controller
        // if (!ModelState.IsValid) return View(model);
        
        var email = User.Identity?.Name;
-       var author = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
        var project = await _context.Projects
            .Include(x => x.MTasks)
@@ -61,7 +60,7 @@ public class MTaskController : Controller
        model.MTask.DateOfCreation = DateTime.Now;
        model.MTask.MTaskStatus = MTaskStatus.NEW; 
        
-       model.MTask.Author = author!;
+       model.MTask.AuthorEmail = email!;
 
        model.MTask.Code = Guid.NewGuid().ToString();
        
@@ -69,10 +68,12 @@ public class MTaskController : Controller
        {
            if (item.Value)
            {
+               var itemEmail = item.Key.Split(":")[0];
                var u = await _context.Users
                    .Include(x => x.MTasks)
-                   .FirstOrDefaultAsync(x => x.Email == item.Key);
-               u!.MTasks.Add(model.MTask.Clone() as MTask ?? throw new InvalidOperationException());
+                   .FirstOrDefaultAsync(x => x.Email == itemEmail);
+               var t = model.MTask.Clone() as MTask ?? throw new InvalidOperationException();
+               u!.MTasks.Add(t);
                _context.Users.Update(u);
            }
        }
@@ -93,7 +94,6 @@ public class MTaskController : Controller
         var email = User.Identity?.Name;
         
         var task = await _context.MTasks
-            .Include(x => x.Author)
             .FirstOrDefaultAsync(x => x.Id == idTask);
 
         if (task!.MTaskStatus == MTaskStatus.NEW)
@@ -103,10 +103,13 @@ public class MTaskController : Controller
             await _context.SaveChangesAsync();
         }
         
+        var author = _context.Users.FirstOrDefault(x => x.Email == task.AuthorEmail);
+
         var model = new MainMTaskPageViewModel
         {
             MTask = task,
-            isAuthor = task.Author.Email == email,
+            isAuthor = task.AuthorEmail == email,
+            Author = author!
         };
         
         return View(model);
@@ -145,7 +148,6 @@ public class MTaskController : Controller
     public async Task<IActionResult> TaskPerformers(int idTask, bool completed)
     {
         var mainTask = await _context.MTasks
-            .Include(x => x.Author)
             .FirstOrDefaultAsync(x => x.Id == idTask);
 
         var users = _context.Users
@@ -189,5 +191,4 @@ public class MTaskController : Controller
         
         return View(viewModel);
     }
-
 }

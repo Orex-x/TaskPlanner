@@ -4,18 +4,28 @@
     Layout = "_Layout";
 }
 
+<script>
+function submitForm() {
+    var form = document.forms[0];
+    form.submit();
+}
+
+</script>
 
 <body class="text-center" style="margin-bottom: 100px">
 <div class="panel" style="margin-top: 50px">
     <div class="container">
         <div class="row">
             <div class="col">
-                <form action="" enctype="multipart/form-data" method="post">
-                    <div class="user-photo">
-                        <div class="user-photo__img-wrap img-plug">
-                            <img width="64" height="64" alt="User avatar" src="//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2">
+                <form asp-action="UploadAvatar" asp-controller="Account" enctype="multipart/form-data" method="post">
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png" name="uploadedFile" style="display: none;" onchange="submitForm()">
+                    <label for="fileInput">
+                        <div class="user-photo">
+                            <div class="user-photo__img-wrap img-plug" style="border-radius: 50%">
+                                <img width="64" height="64" style="border-radius: 50%" alt="User avatar" src="@Url.Content(Model.User.PathToAvatar)">
+                            </div>
                         </div>
-                    </div>
+                    </label>
                 </form>
             </div>
             <div class="col-8">
