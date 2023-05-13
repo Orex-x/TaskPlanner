@@ -1,6 +1,7 @@
 ﻿namespace TaskPlanner.Models;
 
-public class SelectedUserViewModel
+public class UserTask
 {
     public User User { get; set; }
+    public MTask MTask { get; set; }
 }

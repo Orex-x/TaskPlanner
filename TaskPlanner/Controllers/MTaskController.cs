@@ -141,5 +141,53 @@ public class MTaskController : Controller
         
         return RedirectToAction("AllMTasks", "Home");
     }
-    
+
+    public async Task<IActionResult> TaskPerformers(int idTask, bool completed)
+    {
+        var mainTask = await _context.MTasks
+            .Include(x => x.Author)
+            .FirstOrDefaultAsync(x => x.Id == idTask);
+
+        var users = _context.Users
+            .Include(x => x.MTasks)
+            .Where(x => x.MTasks.Select(y => y.Code).Contains(mainTask!.Code));
+
+        var list = new List<UserTask>();
+        
+        await users.ForEachAsync(user =>
+        {
+            var task = user.MTasks.FirstOrDefault(x => x.Code == mainTask!.Code);
+
+            if (completed)
+            {
+                if (task!.MTaskStatus == MTaskStatus.SHIPPED || task!.MTaskStatus == MTaskStatus.COMPLETED)
+                {
+                    list.Add(new UserTask
+                    {
+                        User = user,
+                        MTask = task,
+                    });
+                }
+            }
+            else
+            {
+                if (task!.MTaskStatus != MTaskStatus.SHIPPED && task!.MTaskStatus != MTaskStatus.COMPLETED)
+                {
+                    list.Add(new UserTask
+                    {
+                        User = user,
+                        MTask = task,
+                    });
+                }
+            }
+        });
+
+        var viewModel = new TaskPerformersViewModel
+        { 
+            UserTasks = list
+        };
+        
+        return View(viewModel);
+    }
+
 }
