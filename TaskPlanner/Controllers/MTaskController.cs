@@ -43,36 +43,41 @@ public class MTaskController : Controller
     public async Task<IActionResult> CreateMTask(CreateMTaskViewModel model)
     {
        // if (!ModelState.IsValid) return View(model);
-
-        var project = await _context.Projects
-            .Include(x => x.MTasks)
-            .FirstOrDefaultAsync(x => x.Id == model.idProject);
-
-        if (project == null) return View(model);
-        
-        model.MTask.DateOfCreation = DateTime.Now;
-        model.MTask.MTaskStatus = MTaskStatus.NEW;
-        
-        foreach (var item in model.SelectedUsers)
-        {
-            if (item.Value)
-            {
-                var u = await _context.Users
-                    .Include(x => x.MTasks)
-                    .FirstOrDefaultAsync(x => x.Email == item.Key);
-                u!.MTasks.Add(model.MTask.Clone() as MTask ?? throw new InvalidOperationException());
-                _context.Users.Update(u);
-            }
-        }
-        
-        project.MTasks.Add(model.MTask);
-
-        _context.Projects.Update(project);
-        await _context.SaveChangesAsync();
-        
        
-        return RedirectToAction("MainProjectPage", "Project", 
-            new { idProject = model.idProject, isAdmin = model.IsAdmin });
+       var email = User.Identity?.Name;
+       var author = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+       var project = await _context.Projects
+           .Include(x => x.MTasks)
+           .FirstOrDefaultAsync(x => x.Id == model.idProject);
+        
+       if (project == null) return View(model);
+        
+       model.MTask.DateOfCreation = DateTime.Now;
+       model.MTask.MTaskStatus = MTaskStatus.NEW; 
+       
+       //model.MTask.Author = author!;
+       
+       foreach (var item in model.SelectedUsers)
+       {
+           if (item.Value)
+           {
+               var u = await _context.Users
+                   .Include(x => x.MTasks)
+                   .FirstOrDefaultAsync(x => x.Email == item.Key);
+               u!.MTasks.Add(model.MTask.Clone() as MTask ?? throw new InvalidOperationException());
+               _context.Users.Update(u);
+           }
+       }
+       
+       project.MTasks.Add(model.MTask);
+
+       _context.Projects.Update(project);
+       await _context.SaveChangesAsync();
+       
+       
+       return RedirectToAction("MainProjectPage", "Project", 
+           new { idProject = model.idProject, isAdmin = model.IsAdmin });
     }
 
     [Authorize]

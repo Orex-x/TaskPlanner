@@ -26,6 +26,8 @@ public class MTask : ICloneable
     
     public MTaskStatus MTaskStatus { get; set; }
     
+    public User Author { get; set; }
+    
     public object Clone()
     {
         return MemberwiseClone();

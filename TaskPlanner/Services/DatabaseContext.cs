@@ -27,6 +27,6 @@ public class DatabaseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(
-            "host=localhost;port=5432;database=TaskPlanner;username=postgres;password=333");
+            "host=localhost;port=5432;database=TaskPlanner;username=postgres;password=123");
     }
 }
