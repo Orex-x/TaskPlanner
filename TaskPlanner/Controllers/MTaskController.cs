@@ -18,14 +18,19 @@ public class MTaskController : Controller
  
     public async Task<IActionResult> CreateMTask(int idProject, int idGroup, bool isAdmin)
     {
-
+        var email = User.Identity?.Name;
+        
         var users = _context.UserGroups
             .Where(x => x.Group.Id == idGroup)
             .Select(x => x.User);
 
         var selectedUsers = new Dictionary<string, Boolean>();
         
-        await users.ForEachAsync(user => selectedUsers.Add(user.Email, true));
+        await users.ForEachAsync(user =>
+        {
+            if (user.Email != email)
+                selectedUsers.Add(user.Email, true);
+        });
 
         var model = new CreateMTaskViewModel
         {
@@ -56,7 +61,9 @@ public class MTaskController : Controller
        model.MTask.DateOfCreation = DateTime.Now;
        model.MTask.MTaskStatus = MTaskStatus.NEW; 
        
-       //model.MTask.Author = author!;
+       model.MTask.Author = author!;
+
+       model.MTask.Code = Guid.NewGuid().ToString();
        
        foreach (var item in model.SelectedUsers)
        {
@@ -84,8 +91,10 @@ public class MTaskController : Controller
     public async Task<IActionResult> MainMTaskPage(int idTask)
     {
         var email = User.Identity?.Name;
-        var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-        var task = await _context.MTasks.FirstOrDefaultAsync(x => x.Id == idTask);
+        
+        var task = await _context.MTasks
+            .Include(x => x.Author)
+            .FirstOrDefaultAsync(x => x.Id == idTask);
 
         if (task!.MTaskStatus == MTaskStatus.NEW)
         {
@@ -96,7 +105,8 @@ public class MTaskController : Controller
         
         var model = new MainMTaskPageViewModel
         {
-            MTask = task
+            MTask = task,
+            isAuthor = task.Author.Email == email,
         };
         
         return View(model);
@@ -114,4 +124,22 @@ public class MTaskController : Controller
         
         return RedirectToAction("MainMTaskPage", "MTask", new { idTask = idTask });
     }
+
+    public async Task<IActionResult> DeleteTask(int idTask)
+    {
+        var task = await _context.MTasks.FirstOrDefaultAsync(x => x.Id == idTask);
+
+        if (task != null)
+        {
+
+            var list = _context.MTasks.Where(x => x.Code == task.Code);
+
+            await list.ForEachAsync(x => _context.MTasks.Remove(x));
+
+            await _context.SaveChangesAsync();
+        }
+        
+        return RedirectToAction("AllMTasks", "Home");
+    }
+    
 }

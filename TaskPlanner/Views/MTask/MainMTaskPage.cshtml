@@ -8,80 +8,151 @@
 <div>
     <div class="row">
         <div class="col">
-            <div class="row">
-                <div class="col">
-                    Приоритет: <span class="badge badge-info" style="width: 80px; height: 20px; margin-top: -20px">@Model.MTask.MTaskPriority</span>
-                </div>
-                <div class="col">
-                    Статус: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px">@Model.MTask.MTaskStatus</span>
-                </div>
-            </div>
+            
+            @{
+                if (Model.isAuthor)
+                {
+                    <div class="row">
+                        <div class="col">
+                            Сдали работу: <span class="badge badge-success" style="width: 30px; height: 20px; margin-top: -20px">12</span>
+                        </div>
+                        <div class="col">
+                            Не сдали работу: <span class="badge badge-warning" style="width: 30px; height: 20px; margin-top: -20px">8</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col">
+                            Приоритет: <span class="badge badge-info" style="width: 80px; height: 20px; margin-top: -20px">@Model.MTask.MTaskPriority</span>
+                        </div>
+                        <div class="col">
+                            Статус: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px">@Model.MTask.MTaskStatus</span>
+                        </div>
+                    </div>
+
+                }
+            }
+
             <div style="margin-top: 100px">
                 <h1>@Model.MTask.Title</h1>
-                <p>@Model.MTask.Description</p>
+
+                <div class="row">
+                    <div class="col" style="text-align: left">
+                        <p>@Model.MTask.Author.FirstName @Model.MTask.Author.SecondName @Model.MTask.Author.LastName</p>
+                    </div>
+                    <div class="col" style="text-align: right">
+                        <p>Дата сдачи: @Model.MTask.Deadline</p>
+                    </div>
+                </div>
+                <hr style="margin-top: -10px">
+
+                <div style="margin-top: 20px">
+                    <h4>@Model.MTask.Description</h4>
+                </div>
             </div>
-           
         </div>
         
-        @*Форма для сдачи*@
-        <div class="col">
-            <div class="col" style="text-align: left">
-                <div class="row">
-                    <h6>Дата сдачи: @Model.MTask.Deadline</h6> 
+        
+        @{
+            if (Model.isAuthor)
+            {
+                   <div class="col">
+                       <div class="col" style="text-align: left">
+                           <div class="row">
+                               <a class="nav-link text-light" asp-area=""
+                                  asp-route-idTask="@Model.MTask.Id"
+                                  asp-route-status="@MTaskStatus.SHIPPED"
+                                  asp-controller="MTask" asp-action="SetMTaskStatus">
+                                   <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                       Выполненые работы
+                                   </button>
+                               </a>
+                           </div>
+                           
+                           <div class="row">
+                               <a class="nav-link text-light" asp-area=""
+                                  asp-route-idTask="@Model.MTask.Id"
+                                  asp-route-status="@MTaskStatus.SHIPPED"
+                                  asp-controller="MTask" asp-action="SetMTaskStatus">
+                                   <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">
+                                       Не выполненные работы
+                                   </button>
+                               </a>
+                           </div>
+                           
+                           <div class="row">
+                               <a class="nav-link text-light" asp-area=""
+                                  asp-route-idTask="@Model.MTask.Id"
+                                  asp-controller="MTask" asp-action="DeleteTask">
+                                   <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">
+                                       Удалить задачу
+                                   </button>
+                               </a>
+                           </div>
+                       </div>
                 </div>
-                
-                @{
-                    switch (Model.MTask.MTaskStatus)
-                    {
-                        case MTaskStatus.IN_PROGRESS:
-                        {
-                            <div class="row">
-                                <a class="nav-link text-light" asp-area=""
-                                   asp-route-idTask="@Model.MTask.Id"
-                                   asp-route-status="@MTaskStatus.SHIPPED"
-                                   asp-controller="MTask" asp-action="SetMTaskStatus">
-                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                                        Отметить как выполненое
-                                    </button>
-                                </a>
-                            </div>
+            }
+            else
+            {
+            @*Форма для сдачи*@
+                <div class="col">
+                    <div class="col" style="text-align: left">
+                        @{
+                            switch (Model.MTask.MTaskStatus)
+                            {
+                                case MTaskStatus.IN_PROGRESS:
+                                {
+                                    <div class="row">
+                                        <a class="nav-link text-light" asp-area=""
+                                           asp-route-idTask="@Model.MTask.Id"
+                                           asp-route-status="@MTaskStatus.SHIPPED"
+                                           asp-controller="MTask" asp-action="SetMTaskStatus">
+                                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                                Отметить как выполненое
+                                            </button>
+                                        </a>
+                                    </div>
                             
-                            break;
-                        }
-                        case MTaskStatus.SHIPPED:
-                        {
-                            <div class="row">
-                                <a class="nav-link text-light" asp-area=""
-                                   asp-route-idTask="@Model.MTask.Id"
-                                   asp-route-status="@MTaskStatus.IN_PROGRESS"
-                                   asp-controller="MTask" asp-action="SetMTaskStatus">
-                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                                        Отменить отправку
-                                    </button>
-                                </a>
-                            </div>
+                                    break;
+                                }
+                                case MTaskStatus.SHIPPED:
+                                {
+                                    <div class="row">
+                                        <a class="nav-link text-light" asp-area=""
+                                           asp-route-idTask="@Model.MTask.Id"
+                                           asp-route-status="@MTaskStatus.IN_PROGRESS"
+                                           asp-controller="MTask" asp-action="SetMTaskStatus">
+                                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                                Отменить отправку
+                                            </button>
+                                        </a>
+                                    </div>
                             
-                            break;
-                        }
-                        case MTaskStatus.COMPLETED:
-                        {
-                            <div class="row">
-                                <a class="nav-link text-light" asp-area=""
-                                   asp-route-idTask="@Model.MTask.Id"
-                                   asp-route-status="@MTaskStatus.IN_PROGRESS"
-                                   asp-controller="MTask" asp-action="SetMTaskStatus">
-                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                                        Вернуть задачу
-                                    </button>
-                                </a>
-                            </div>
+                                    break;
+                                }
+                                case MTaskStatus.COMPLETED:
+                                {
+                                    <div class="row">
+                                        <a class="nav-link text-light" asp-area=""
+                                           asp-route-idTask="@Model.MTask.Id"
+                                           asp-route-status="@MTaskStatus.IN_PROGRESS"
+                                           asp-controller="MTask" asp-action="SetMTaskStatus">
+                                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                                                Вернуть задачу
+                                            </button>
+                                        </a>
+                                    </div>
                             
-                            break;
+                                    break;
+                                }
+                            }
                         }
-                    }
-                }
-            </div>
-        </div>
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>
 
