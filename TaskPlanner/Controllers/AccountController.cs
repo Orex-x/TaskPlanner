@@ -27,11 +27,13 @@ public class AccountController : Controller
     public async Task<IActionResult> AccountHome()
     {
         var email = User.Identity?.Name;
-        var user = _context.Users.FirstOrDefault(x => x.Email == email);
+        var user = await _context.Users
+            .Include(x => x.FavoriteMTasks)
+            .FirstOrDefaultAsync(x => x.Email == email);
         
         var model = new AccountHomeViewModel
         {
-            User = user,
+            User = user!,
         };
             
         return View(model);
@@ -140,4 +142,32 @@ public class AccountController : Controller
 
         return RedirectToAction("AccountHome", "Account");
     }
+    
+    [Authorize]
+    public async Task<RedirectToActionResult> UpdateFavoriteMTask(int id)
+    {
+        var mTask = await _context.MTasks.FirstOrDefaultAsync(x => x.Id == id);
+        
+        if (mTask != null)
+        {
+            var email = User.Identity?.Name;
+            var user = await _context.Users
+                .Include(x => x.FavoriteMTasks)
+                .FirstOrDefaultAsync(x => x.Email == email);
+       
+            if (user != null)
+            {
+                var _ = user.FavoriteMTasks.FirstOrDefault(x => x.Id == id);
+                if (_ == null)
+                    user.FavoriteMTasks.Add(mTask);
+                else
+                    user.FavoriteMTasks.Remove(mTask);   
+                    
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+            }
+        }
+        return RedirectToAction("AccountHome", "Account");
+    }
+
 }

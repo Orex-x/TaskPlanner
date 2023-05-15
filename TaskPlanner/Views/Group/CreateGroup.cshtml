@@ -4,26 +4,41 @@
     Layout = "_Layout";
 }
 
+<script>
+function submitForm() {
+    var form = document.forms[1];
+    form.submit();
+}
+</script>
+
+
 <div class="container">
-   <form asp-action="CreateGroup" asp-controller="Group" asp-anti-forgery="true">
-           <div class="child">
-               
-               <div class="child-child" style="margin-top: 10px">
-                   <h1 class="h3 mb-3 font-weight-normal">Добавление группы</h1>
-               </div>
-               
-               <div class="child-child" style="margin-top: 10px">
-                   <input asp-for="Group.Name" type="text" class="form-control" placeholder="Имя" />
-               </div>
-               
-               <div class="child-child" style="margin-top: 10px">
-                   <input asp-for="Group.Description" type="text" class="form-control" placeholder="Описание" />
-               </div>
-               
-               <div class="child-child" style="margin-top: 10px">
-                   <button class="btn btn-primary btn-lg mt-6" type="submit">Создать группу</button>
-               </div>
+   <form asp-action="CreateGroup" asp-controller="Group" enctype="multipart/form-data"  asp-anti-forgery="true">
+       <div class="child">
+           
+           <div class="child-child" style="margin-top: 10px">
+               <h1 class="h3 mb-3 font-weight-normal">Добавление группы</h1>
            </div>
+           
+           <input type="hidden" asp-for="Group.PathToImage" value="~/images/GroupImageDefault.png"/>
+           
+           <div class="child-child" style="margin-top: 10px">
+               <label for="formFile" class="form-label" asp-for="FileUpload.FormFile"></label>
+               <input class="form-control" accept="image/jpeg,image/png" asp-for="FileUpload.FormFile" type="file">
+           </div>
+
+           <div class="child-child" style="margin-top: 10px">
+               <input asp-for="Group.Name" type="text" class="form-control" placeholder="Имя"/>
+           </div>
+
+           <div class="child-child" style="margin-top: 10px">
+               <input asp-for="Group.Description" type="text" class="form-control" placeholder="Описание"/>
+           </div>
+
+           <div class="child-child" style="margin-top: 10px">
+               <button class="btn btn-primary btn-lg mt-6" type="submit">Создать группу</button>
+           </div>
+       </div>
    </form>
 </div>
 

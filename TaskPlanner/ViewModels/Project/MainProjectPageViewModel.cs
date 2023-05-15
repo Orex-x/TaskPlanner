@@ -9,4 +9,6 @@ public class MainProjectPageViewModel
     
     public int SortRule { get; set; }
     
+    public User User { get; set; }
+    
 }

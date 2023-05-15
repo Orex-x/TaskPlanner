@@ -16,6 +16,9 @@
 
     <ItemGroup>
       <Content Remove="wwwroot\uploads\d3c217d9-acc1-4729-ad2e-af3663f6bd54.jpg" />
+      <Content Update="wwwroot\images\GroupImageDefault.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

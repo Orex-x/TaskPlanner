@@ -19,6 +19,11 @@ public class ProjectController : Controller
     public async Task<IActionResult> MainProjectPage(int idProject, int idGroup, bool isAdmin)
     {
 
+        var email = User.Identity?.Name;
+        var user = _context.Users
+            .Include(x => x.FavoriteMTasks)
+            .FirstOrDefault(x => x.Email == email);
+        
         var project = await _context.Projects
             .Include(x => x.MTasks)
             .FirstOrDefaultAsync(x => x.Id == idProject);
@@ -27,7 +32,9 @@ public class ProjectController : Controller
         {
             Project = project!,
             IsAdmin = isAdmin,
-            IdGroup = idGroup
+            IdGroup = idGroup,
+            User = user,
+            
         };
         return View(model);
     }

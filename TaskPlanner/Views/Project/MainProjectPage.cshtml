@@ -5,6 +5,36 @@
 }
 
 
+
+@section Scripts{
+  <script>
+        $(document).ready(function() {
+            $(".btn-favorite").on("click", function() {
+                var id = $(this).attr("data-product-id");
+                var url = '@Url.Action("UpdateFavoriteMTask", "Account")' + '/' + id;
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    success: function(response) {
+                      const elem = document.getElementById('link-favorite-' + id);
+                      const classAttr = elem.getAttribute('class');
+                      
+                      if (classAttr === 'btn btn-light btn-favorite'){
+                        elem.setAttribute("class", "btn btn-danger btn-favorite");
+                      }else{
+                       elem.setAttribute("class", "btn btn-light btn-favorite");
+                      }
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
 <h3 class="personal-data__data-title" style="margin-top: 50px; margin-bottom: 50px">@Model.Project.Name</h3>
 
 
@@ -104,9 +134,21 @@
                                               </a>
                                           </div>
                                           <div class="col-md-auto">
-                                              <a asp-action="Authorization" asp-controller="Account" class="btn btn-light btn-favorite">
-                                                  ♥
-                                              </a>
+                                              @{
+                                                  var product = Model.User?.FavoriteMTasks.FirstOrDefault(x => x.Id == item.Id);
+                                                  if (product == null)
+                                                  {
+                                                      <a id="link-favorite-@item.Id" href="javascript:void(0)" data-product-id="@item.Id" class="btn btn-light btn-favorite">
+                                                          ♥
+                                                      </a>
+                                                  }
+                                                  else
+                                                  {
+                                                      <a id="link-favorite-@item.Id" href="javascript:void(0)" data-product-id="@item.Id" class="btn btn-danger btn-favorite">
+                                                          ♥
+                                                      </a>
+                                                  }
+                                              }
                                           </div>
                                       </div>
                                   </div>

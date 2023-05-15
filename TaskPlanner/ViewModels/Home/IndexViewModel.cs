@@ -5,4 +5,6 @@ public class IndexViewModel
     public ICollection<Project> Projects { get; set; }
     
     public ICollection<MTask> MTasksHighPreority { get; set; }
+    
+    public User User { get; set; }
 }

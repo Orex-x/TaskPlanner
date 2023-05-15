@@ -14,4 +14,6 @@ public class User
     public string PathToAvatar { get; set; }
     
     public virtual ICollection<MTask> MTasks { get; set; } = new List<MTask>();
+    
+    public virtual ICollection<MTask> FavoriteMTasks { get; set; } = new List<MTask>();
 }

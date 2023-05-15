@@ -8,5 +8,7 @@ public class Group
     
     public string Description { get; set; }
     
+    public string PathToImage { get; set; }
+    
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 }

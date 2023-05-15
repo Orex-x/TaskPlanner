@@ -22,8 +22,26 @@ public class GroupController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateGroup(CreateGroupViewModel model)
     {
-        if (!ModelState.IsValid) return View(model);
         
+        if (model.FileUpload?.FormFile != null && model.FileUpload.FormFile.Length > 0)
+        {
+            if (!ModelState.IsValid) return View(model);
+            
+            // Генерируем уникальное имя файла
+            var fileName = Guid.NewGuid() + Path.GetExtension(model.FileUpload.FormFile.FileName);
+
+            // Создаем путь для сохранения файла
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads", fileName);
+
+            // Копируем содержимое файла в указанный поток
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await model.FileUpload.FormFile.CopyToAsync(stream);
+            }
+            
+            model.Group!.PathToImage = $"~/uploads/{fileName}";
+        }
+
         var email = User.Identity?.Name;
 
         var user = _context.Users.FirstOrDefault(x => x.Email == email);
@@ -136,9 +154,6 @@ public class GroupController : Controller
     }
     
     
-    
-
-
     [Authorize]
     public async Task<IActionResult> MainGroupPage()
     {
@@ -159,6 +174,4 @@ public class GroupController : Controller
         
         return View(model);
     }
-    
-
 }

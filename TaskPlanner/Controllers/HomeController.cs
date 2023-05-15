@@ -23,6 +23,7 @@ public class HomeController : Controller
 
         var user = await _context.Users
             .Include(x => x.MTasks)
+            .Include(x => x.FavoriteMTasks)
             .FirstOrDefaultAsync(x => x.Email == email);
 
         var list = user!.MTasks
@@ -31,7 +32,8 @@ public class HomeController : Controller
 
         var model = new IndexViewModel
         {
-            MTasksHighPreority = list
+            MTasksHighPreority = list,
+            User = user,
         };
 
         return View(model);
@@ -44,11 +46,13 @@ public class HomeController : Controller
 
         var user = await _context.Users
             .Include(x => x.MTasks)
+            .Include(x => x.FavoriteMTasks)
             .FirstOrDefaultAsync(x => x.Email == email);
         
         var model = new AllMTasksViewModel
         {
-            MTasks = user!.MTasks
+            MTasks = user!.MTasks,
+            User = user
         };
 
         return View(model);

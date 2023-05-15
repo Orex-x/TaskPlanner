@@ -2,6 +2,7 @@
 
 
 using System;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
 namespace TaskPlanner.Models;
@@ -28,7 +29,9 @@ public class MTask : ICloneable
     public MTaskStatus MTaskStatus { get; set; }
     
     public string AuthorEmail { get; set; }
-    
+
+    public List<string> PathToFiles { get; set; } = new List<string>();
+
     public object Clone()
     {
         return MemberwiseClone();

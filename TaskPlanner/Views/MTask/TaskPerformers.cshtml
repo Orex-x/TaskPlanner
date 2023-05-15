@@ -12,8 +12,7 @@
                <div>
                    <div class="card-body" style="text-align-all: center">
                        <div class="d-flex align-items-center">
-                           <img src="//images.wbstatic.net/img/0/medium/PersonalPhoto.png?2" 
-                                class="rounded-circle me-3" width="50" height="50" alt="User Photo">
+                            <img width="64" height="64" style="border-radius: 50%" alt="User avatar" src="@Url.Content(item.User.PathToAvatar)">
                            <div>
                                <h5 class="mb-0">@item.User.FirstName @item.User.SecondName @item.User.LastName</h5>
                                <p class="mb-0">Состояние выполнения задачи: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px">@item.MTask.MTaskStatus</span></p>
