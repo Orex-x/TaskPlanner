@@ -72,14 +72,28 @@ public class ProjectController : Controller
     }
     
     [Authorize]
-    public async Task<IActionResult> RemoveProject(int idProject, int IdUserGroup)
+    public async Task<IActionResult> RemoveProject(int idProject, int idUserGroup)
     {
-        var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == idProject);
+        var project = await _context.Projects
+            .Include(x => x.MTasks)
+            .FirstOrDefaultAsync(x => x.Id == idProject);
+
+        if (project != null)
+        {
+            var listMTasks = project.MTasks.ToList();
         
-        _context.Projects.Remove(project!);
-        await _context.SaveChangesAsync();
+            listMTasks.ForEach(async task =>
+            {
+                var list = _context.MTasks.Where(x => x.Code == task.Code);
+                await list.ForEachAsync(x => _context.MTasks.Remove(x));
+            });
+            
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();    
+        }
         
-        return RedirectToAction("GroupPage", "Group", new { id = IdUserGroup });
+        return RedirectToAction("GroupPage", "Group", new { id = idUserGroup });
     }
+    
 }
     

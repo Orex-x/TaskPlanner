@@ -62,11 +62,14 @@ public class GroupController : Controller
     [Authorize]
     public async Task<IActionResult> GroupPage(int id)
     {
+        var email = User.Identity?.Name;
+        
         var userGroup = await _context.UserGroups
             .Include(x => x.Group)
             .ThenInclude(x => x.Projects)
             .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .Where(x => x.User.Email == email)
+            .FirstOrDefaultAsync(x => x.Group.Id == id);
 
 
         var model = new GroupPageViewModel
@@ -134,11 +137,7 @@ public class GroupController : Controller
         
         return RedirectToAction("MainGroupPage", "Group");
     }
-    
-    
-   
 
-    
     [Authorize]
     public async Task<IActionResult> DeleteGroup(int id)
     {

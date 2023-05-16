@@ -19,7 +19,28 @@
                   document.body.removeChild(textarea);
                   
             });
-        });
+            
+            $(".check-admin").on("change", function (){ 
+              var isChecked = this.checked;
+              var id = $(this).attr("user-group-id");
+                    
+              var url = '@Url.Action("UpdateUserGroup", "Account")' 
+              + '/?id=' + id + '&isAdmin=' + isChecked;
+              
+              $.ajax({
+                  type: 'GET',
+                  url: url,
+                  contentType: false,
+                  processData: false,
+                  cache: false,
+                  success: function(response) {
+                   
+                  }
+              });
+            });
+});
+        
+    
     </script>
 }
 
@@ -56,7 +77,7 @@
                                 {
                                     <div class="col">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" checked="@item.IsAdmin">
+                                            <input class="form-check-input check-admin" user-group-id="@item.Id" type="checkbox" role="switch" id="flexSwitchCheck" checked="@item.IsAdmin">
                                             <label class="form-check-label" for="flexSwitchCheck">Админ</label>
                                         </div>
                                     </div>

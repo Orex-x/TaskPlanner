@@ -71,30 +71,30 @@
                           <img src="@Url.Content(item.Group.PathToImage)" class="card-img-top">
                           <a asp-controller="Group" asp-action="GroupPage" asp-route-id="@item.Group.Id"
                              style="text-decoration: none; text-decoration-color: black; color: black;">
-                                <div class="card-body">
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <h5 class="card-title" style="margin-top: 10px">@item.Group.Name</h5>
-                                                                    </div>
+                              <div class="card-body">
+                                  <div class="row">
+                                      <div class="col">
+                                          <h5 class="card-title" style="margin-top: 10px">@item.Group.Name</h5>
+                                      </div>
                               
-                                                                    <div class="col">
-                                                                        <div class="right" style="margin-right: 10px; text-align: right">
-                                                                            @if (item.IsAdmin)
-                                                                            {
-                                                                                <span class="badge badge-primary" style="width: 95px; height: 20px">Админ</span>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <span class="badge badge-secondary" style="width: 95px; height: 20px">Участник</span>
-                                                                            }
-                                                                        </div>
+                                      <div class="col">
+                                          <div class="right" style="margin-right: 10px; text-align: right">
+                                              @if (item.IsAdmin)
+                                              {
+                                                  <span class="badge badge-primary" style="width: 95px; height: 20px">Админ</span>
+                                              }
+                                              else
+                                              {
+                                                  <span class="badge badge-secondary" style="width: 95px; height: 20px">Участник</span>
+                                              }
+                                          </div>
                               
-                                                                    </div>
-                                                                </div>
+                                      </div>
+                                  </div>
                               
-                                                                <p class="card-text">@item.Group.Description</p>
-                                                                <p class="card-text"><small class="text-muted">Количество проектов в группе: @item.Group.Projects.Count</small></p>
-                                                            </div>
+                                  <p class="card-text">@item.Group.Description</p>
+                                  <p class="card-text"><small class="text-muted">Количество проектов в группе: @item.Group.Projects.Count</small></p>
+                              </div>
                           </a>
                       </div>
                   }

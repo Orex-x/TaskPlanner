@@ -169,5 +169,23 @@ public class AccountController : Controller
         }
         return RedirectToAction("AccountHome", "Account");
     }
+    
+    
+    [Authorize]
+    public async Task<RedirectToActionResult> UpdateUserGroup(int id, bool isAdmin)
+    {
+        var userGroup = await _context.UserGroups
+            .FirstOrDefaultAsync(x => x.Id == id);
+        
+        if (userGroup != null)
+        {
+            userGroup.IsAdmin = isAdmin;
+
+            _context.UserGroups.Update(userGroup);
+            await _context.SaveChangesAsync();
+        }
+        
+        return RedirectToAction("AccountHome", "Account");
+    }
 
 }
