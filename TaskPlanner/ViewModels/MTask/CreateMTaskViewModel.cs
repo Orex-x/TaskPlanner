@@ -1,4 +1,6 @@
-﻿namespace TaskPlanner.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace TaskPlanner.Models;
 
 public class CreateMTaskViewModel
 {
@@ -8,4 +10,7 @@ public class CreateMTaskViewModel
     public bool IsAdmin { get; set; }
     
     public Dictionary<string, Boolean> SelectedUsers { get; set; }
+    
+    [BindProperty]
+    public BufferedSingleMultiplyFileUploadDb FileUpload { get; set; }
 }

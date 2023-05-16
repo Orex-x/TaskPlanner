@@ -29,8 +29,15 @@ public class MTask : ICloneable
     public MTaskStatus MTaskStatus { get; set; }
     
     public string AuthorEmail { get; set; }
+    
+    public bool Original { get; set; } 
 
-    public List<string> PathToFiles { get; set; } = new List<string>();
+    public List<MFile> PathToFiles { get; set; } = new List<MFile>();
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     public object Clone()
     {

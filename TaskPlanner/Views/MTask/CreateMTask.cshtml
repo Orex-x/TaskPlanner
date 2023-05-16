@@ -5,7 +5,7 @@
 }
 
 <div class="container">
-    <form asp-action="CreateMTask" asp-controller="MTask" asp-anti-forgery="true">
+    <form asp-action="CreateMTask" asp-controller="MTask" enctype="multipart/form-data" asp-anti-forgery="true">
         <div class="child">
 
             <input type="hidden" asp-for="idProject"/>
@@ -38,8 +38,12 @@
                     }
                 }
             </select>
-
-
+            
+            <div class="child-child" style="margin-top: 10px">
+                <label for="formFileMultiple" class="form-label">Файлы к задаче</label>
+                <input class="form-control" asp-for="FileUpload.FormFiles" type="file" id="formFileMultiple" multiple>
+            </div>
+            
             @*В обшем багуля какая та хз, без этого куска он нижнюю форму не отображает как надо (по нажатью кнопки)
             а отображает сразу всю форму *@
 
@@ -66,7 +70,7 @@
                                         <div class="col">
                                             <div class="user-photo">
                                                 <div class="user-photo__img-wrap img-plug">
-                                                    <img width="64" height="64" style="border-radius: 50%" alt="User avatar"  src="@Url.Content(avatar)">
+                                                    <img width="64" height="64" style="border-radius: 50%" alt="User avatar" src="@Url.Content(avatar)">
                                                 </div>
                                             </div>
                                             <h6 class="card-title" style="text-align: left; margin-top: 10px">@email</h6>

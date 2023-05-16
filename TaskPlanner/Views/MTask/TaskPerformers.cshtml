@@ -4,28 +4,128 @@
     Layout = "_Layout";
 }
 
-<ul class="list-group">
-   @{
-       foreach (var item in Model.UserTasks)
-       {
-           <div class="card" style="border-radius: 25px; margin-top: 20px">
-               <div>
-                   <div class="card-body" style="text-align-all: center">
-                       <div class="d-flex align-items-center">
-                            <img width="64" height="64" style="border-radius: 50%" alt="User avatar" src="@Url.Content(item.User.PathToAvatar)">
-                           <div>
-                               <h5 class="mb-0">@item.User.FirstName @item.User.SecondName @item.User.LastName</h5>
-                               <p class="mb-0">Состояние выполнения задачи: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px">@item.MTask.MTaskStatus</span></p>
-                           </div>
-                       </div>
-                       <div class="d-flex justify-content-end mt-3">
-                           <button type="button" class="btn btn-outline-secondary me-2">Посмотреть вложенные файлы</button>
-                           <button type="button" class="btn btn-outline-success me-2">Принять задачу</button>
-                           <button type="button" class="btn btn-outline-danger">Вернуть задачу</button>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       }
-   }
-</ul>
+<script>
+ $(document).ready(function() {
+            $(".btn-set-status").on("click", function() {
+                var id = $(this).attr("data-task-id");
+                var status = $(this).attr("data-task-status");
+                var url = '@Url.Action("SetMTaskStatus", "MTask")' + '/?idTask=' + id + '&status=' + status;
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                });
+            });
+        });
+</script>
+
+
+
+<div style="margin-bottom: 60px">
+    <ul class="list-group">
+        @{
+            if (Model.Completed)
+            {
+                <div class="accordion" id="accordionExample">
+                    
+                    @{
+                        int i = 0;
+                    }
+                    @foreach (var userTask in Model.UserTasks)
+                    {
+                        i++;
+                        int groupingsNewProducts = 3;
+                        var groupedNewProducts = userTask.MTask.PathToFiles
+                            .Select((x, i) =>
+                                new
+                                {
+                                    x, i = i / groupingsNewProducts
+                                })
+                            .GroupBy(x => x.i, x => x.x);
+
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@i" aria-expanded="false" aria-controls="collapse-@i">
+                                    <div class="d-flex align-items-center">
+                                        <img width="64" height="64" style="border-radius: 50%" alt="User avatar" src="@Url.Content(userTask.User.PathToAvatar)">
+                                        <div style="margin-left: 20px">
+                                            <h5 class="mb-0">@userTask.User.FirstName @userTask.User.SecondName @userTask.User.LastName</h5>
+                                            <p class="mb-0">Состояние выполнения задачи: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px; margin-left: 10px">@userTask.MTask.MTaskStatus</span></p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapse-@i" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="d-flex justify-content-start mt-3">
+                                        @foreach (var items in groupedNewProducts)
+                                        {
+                                            <div class="row" style="margin-top: 20px">
+                                                @foreach (var item in items)
+                                                {
+                                                    <div class="col">
+                                                        <div class="card" style="border-radius: 20px; margin-bottom: 20px; margin-left: 10px">
+                                                            <div>
+                                                                <div class="card-body" style="text-align-all: center">
+                                                                    <p class="card-text">@item.Name</p>
+
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <p class="card-text"><small class="text-muted">PDF</small></p>
+                                                                        </div>
+                                                                        <div class="col" style="text-align: right; margin-right: 10px">
+                                                                            <a href="@Url.Content(item.Path)" download="@item.Name">
+                                                                                <p class="card-text"><small class="text-muted">Скачать</small></p>
+                                                                            </a>
+                                                                            <a href="@Url.Content(item.Path)">
+                                                                                <p class="card-text"><small class="text-muted">Открыть</small></p>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style="margin-top: 10px">
+                                        <button type="button" data-task-id="@userTask.MTask.Id" data-task-status="@MTaskStatus.COMPLETED" class="btn btn-outline-success me-2 btn-set-status">Принять задачу</button>
+                                        <button type="button" data-task-id="@userTask.MTask.Id" data-task-status="@MTaskStatus.IN_PROGRESS" class="btn btn-outline-danger btn-set-status">Вернуть задачу</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                @foreach (var item in Model.UserTasks)
+                {
+                    
+                    <div class="card" style="border-radius: 25px; margin-top: 20px">
+                        <div>
+                            <div class="card-body" style="text-align-all: center">
+                                <div class="d-flex align-items-center">
+                                    <img width="64" height="64" style="border-radius: 50%" alt="User avatar" src="@Url.Content(item.User.PathToAvatar)">
+                                    <div style="margin-left: 20px">
+                                        <h5 class="mb-0">@item.User.FirstName @item.User.SecondName @item.User.LastName</h5>
+                                        <p class="mb-0">Состояние выполнения задачи: <span class="badge badge-info" style="width: 120px; height: 20px; margin-top: -20px; margin-left: 10px">@item.MTask.MTaskStatus</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </ul>
+</div>
+

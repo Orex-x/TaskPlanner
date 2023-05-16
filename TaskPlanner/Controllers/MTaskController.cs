@@ -47,19 +47,18 @@ public class MTaskController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateMTask(CreateMTaskViewModel model)
     {
-       // if (!ModelState.IsValid) return View(model);
        
-       var email = User.Identity?.Name;
+        
+        var email = User.Identity?.Name;
 
-       var project = await _context.Projects
+        var project = await _context.Projects
            .Include(x => x.MTasks)
            .FirstOrDefaultAsync(x => x.Id == model.idProject);
         
        if (project == null) return View(model);
         
        model.MTask.DateOfCreation = DateTime.Now;
-       model.MTask.MTaskStatus = MTaskStatus.NEW; 
-       
+       model.MTask.MTaskStatus = MTaskStatus.NEW;
        model.MTask.AuthorEmail = email!;
 
        model.MTask.Code = Guid.NewGuid().ToString();
@@ -73,11 +72,40 @@ public class MTaskController : Controller
                    .Include(x => x.MTasks)
                    .FirstOrDefaultAsync(x => x.Email == itemEmail);
                var t = model.MTask.Clone() as MTask ?? throw new InvalidOperationException();
+               t.Original = false;
                u!.MTasks.Add(t);
                _context.Users.Update(u);
            }
        }
        
+       if (model.FileUpload?.FormFiles != null)
+       { 
+           foreach (var item in model.FileUpload.FormFiles)        
+           {
+               if (item.Length > 0)
+               {
+                   // Генерируем уникальное имя файла
+                   var fileName = Guid.NewGuid() + Path.GetExtension(item.FileName);
+
+                   // Создаем путь для сохранения файла
+                   var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads", fileName);
+                    
+                   // Копируем содержимое файла в указанный поток
+                   using (var stream = new FileStream(path, FileMode.Create))
+                   {
+                       await item.CopyToAsync(stream);
+                   }
+                    
+                   model.MTask.PathToFiles.Add(new MFile
+                   {
+                       Name = item.FileName,
+                       Path = $"~/uploads/{fileName}",
+                   });
+               }
+           }
+       }
+       
+       model.MTask.Original = true; 
        project.MTasks.Add(model.MTask);
 
        _context.Projects.Update(project);
@@ -94,8 +122,13 @@ public class MTaskController : Controller
         var email = User.Identity?.Name;
         
         var task = await _context.MTasks
+            .Include(x => x.PathToFiles)
             .FirstOrDefaultAsync(x => x.Id == idTask);
 
+        var mainTask = await _context.MTasks
+            .Include(x => x.PathToFiles)
+            .FirstOrDefaultAsync(x => x.Code == task.Code & x.Original == true);
+        
         if (task!.MTaskStatus == MTaskStatus.NEW)
         {
             task!.MTaskStatus = MTaskStatus.IN_PROGRESS;
@@ -109,13 +142,55 @@ public class MTaskController : Controller
         {
             MTask = task,
             isAuthor = task.AuthorEmail == email,
-            Author = author!
+            Author = author!,
+            MainFiles = mainTask.PathToFiles
         };
         
         return View(model);
     }
 
-    public async Task<IActionResult> SetMTaskStatus(int idTask, MTaskStatus status)
+
+    public async Task<IActionResult> SetMTaskShipped(MainMTaskPageViewModel model)
+    {
+        var task = await _context.MTasks
+            .Include(x => x.PathToFiles)
+            .FirstOrDefaultAsync(x => x.Id == model.MTask.Id);
+        
+        if (model.FileUpload?.FormFiles != null)
+        { 
+            foreach (var item in model.FileUpload.FormFiles)        
+            {
+                if (item.Length > 0)
+                {
+                    // Генерируем уникальное имя файла
+                    var fileName = Guid.NewGuid() + Path.GetExtension(item.FileName);
+
+                    // Создаем путь для сохранения файла
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads", fileName);
+                    
+                    // Копируем содержимое файла в указанный поток
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await item.CopyToAsync(stream);
+                    }
+                    
+                    task.PathToFiles.Add(new MFile
+                    {
+                        Name = item.FileName,
+                        Path = $"~/uploads/{fileName}",
+                    });
+                }
+            }
+        }
+        
+        task.MTaskStatus = MTaskStatus.SHIPPED;
+        _context.MTasks.Update(task);
+        await _context.SaveChangesAsync();
+        
+        return RedirectToAction("MainMTaskPage", "MTask", new { idTask = task.Id });
+    }
+
+    public async Task SetMTaskStatus(int idTask, MTaskStatus status)
     {
         var task = await _context.MTasks.FirstOrDefaultAsync(x => x.Id == idTask);
         if (task != null)
@@ -124,8 +199,6 @@ public class MTaskController : Controller
             _context.MTasks.Update(task);
             await _context.SaveChangesAsync();
         }
-        
-        return RedirectToAction("MainMTaskPage", "MTask", new { idTask = idTask });
     }
 
     public async Task<IActionResult> DeleteTask(int idTask)
@@ -152,13 +225,15 @@ public class MTaskController : Controller
 
         var users = _context.Users
             .Include(x => x.MTasks)
+            .ThenInclude(x => x.PathToFiles)
             .Where(x => x.MTasks.Select(y => y.Code).Contains(mainTask!.Code));
 
         var list = new List<UserTask>();
         
         await users.ForEachAsync(user =>
         {
-            var task = user.MTasks.FirstOrDefault(x => x.Code == mainTask!.Code);
+            var task = user.MTasks
+                .FirstOrDefault(x => x.Code == mainTask!.Code);
 
             if (completed)
             {
@@ -186,7 +261,8 @@ public class MTaskController : Controller
 
         var viewModel = new TaskPerformersViewModel
         { 
-            UserTasks = list
+            UserTasks = list,
+            Completed = completed
         };
         
         return View(viewModel);

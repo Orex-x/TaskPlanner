@@ -1,4 +1,6 @@
-﻿namespace TaskPlanner.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace TaskPlanner.Models;
 
 public class MainMTaskPageViewModel
 {
@@ -7,4 +9,9 @@ public class MainMTaskPageViewModel
     public User Author { get; set; }
     
     public bool isAuthor { get; set; }
+    
+    public List<MFile> MainFiles { get; set; }
+    
+    [BindProperty]
+    public BufferedSingleMultiplyFileUploadDb FileUpload { get; set; }
 }
