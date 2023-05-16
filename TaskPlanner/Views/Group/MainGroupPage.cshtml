@@ -68,8 +68,8 @@
                   {
                       
                       <div class="card mb-3" style="width: 33rem; border-radius: 25px; padding: 0px; margin-left: 20px">
-                          <img src="@Url.Content(item.Group.PathToImage)" class="card-img-top">
-                          <a asp-controller="Group" asp-action="GroupPage" asp-route-id="@item.Group.Id"
+                          <img style="max-height: 300px" src="@Url.Content(item.Group.PathToImage)" class="card-img-top">
+                          <a asp-controller="Group" asp-action="GroupPage" asp-route-id="@item.Id"
                              style="text-decoration: none; text-decoration-color: black; color: black;">
                               <div class="card-body">
                                   <div class="row">

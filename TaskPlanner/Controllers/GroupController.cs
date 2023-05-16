@@ -64,12 +64,18 @@ public class GroupController : Controller
     {
         var email = User.Identity?.Name;
         
-        var userGroup = await _context.UserGroups
+        /*var userGroup = await _context.UserGroups
             .Include(x => x.Group)
             .ThenInclude(x => x.Projects)
             .Include(x => x.User)
             .Where(x => x.User.Email == email)
-            .FirstOrDefaultAsync(x => x.Group.Id == id);
+            .FirstOrDefaultAsync(x => x.Group.Id == id);*/
+        
+        var userGroup = await _context.UserGroups
+            .Include(x => x.Group)
+            .ThenInclude(x => x.Projects)
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.Id == id);
 
 
         var model = new GroupPageViewModel
@@ -143,7 +149,22 @@ public class GroupController : Controller
     {
         var userGroup = await _context.UserGroups
             .Include(x => x.Group)
+            .ThenInclude(x => x.Projects)
+            .ThenInclude(x => x.MTasks)
             .FirstOrDefaultAsync(x => x.Id == id);
+
+        userGroup?.Group.Projects.ToList().ForEach(project =>
+        {
+            var listMTasks = project.MTasks.ToList();
+        
+            listMTasks.ForEach(async task =>
+            {
+                var list = _context.MTasks.Where(x => x.Code == task.Code);
+                await list.ForEachAsync(x => _context.MTasks.Remove(x));
+            });
+            
+            _context.Projects.Remove(project);
+        });
 
         _context.Groups.Remove(userGroup!.Group);
 
