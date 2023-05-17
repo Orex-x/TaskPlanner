@@ -5,6 +5,26 @@
 }
 
 
+<script>
+ $(document).ready(function() {
+            $(".btn-set-status").on("click", function() {
+                var id = $(this).attr("data-task-id");
+                var status = $(this).attr("data-task-status");
+                var url = '@Url.Action("SetMTaskStatus", "MTask")' + '/?idTask=' + id + '&status=' + status;
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    success: function(response) {
+                      location.reload();
+                    }
+                });
+            });
+        });
+</script>
+
 <div style="margin-bottom: 60px">
     <div class="row">
         <div class="col">
@@ -14,10 +34,10 @@
                 {
                     <div class="row">
                         <div class="col">
-                            Сдали работу: <span class="badge badge-success" style="width: 30px; height: 20px; margin-top: -20px">12</span>
+                            Сдали работу: <span class="badge badge-success" style="width: 30px; height: 20px; margin-top: -20px">@Model.SumCompletedTask</span>
                         </div>
                         <div class="col">
-                            Не сдали работу: <span class="badge badge-warning" style="width: 30px; height: 20px; margin-top: -20px">8</span>
+                            Не сдали работу: <span class="badge badge-warning" style="width: 30px; height: 20px; margin-top: -20px">@Model.SumNumCompletedTask</span>
                         </div>
                     </div>
                 }
@@ -146,9 +166,9 @@
                                         </div>
 
                                         <div class="child-child" style="margin-top: 10px">
-                                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                                                Отметить как выполненое
-                                            </button>
+                                            <button type="button"
+                                                    data-task-id="@Model.MTask.Id" data-task-status="@MTaskStatus.SHIPPED" 
+                                                    class="btn btn-outline-danger btn-set-status">Отметить как выполненое</button>
                                         </div>
                                     </form>
                                     
@@ -156,30 +176,21 @@
                                 }
                                 case MTaskStatus.SHIPPED:
                                 {
-                                    <div class="row">
-                                        <a class="nav-link text-light" asp-area=""
-                                           asp-route-idTask="@Model.MTask.Id"
-                                           asp-route-status="@MTaskStatus.IN_PROGRESS"
-                                           asp-controller="MTask" asp-action="SetMTaskStatus">
-                                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                                                Отменить отправку
-                                            </button>
-                                        </a>
-                                    </div>
+
+                                    <button type="button"
+                                            data-task-id="@Model.MTask.Id" data-task-status="@MTaskStatus.IN_PROGRESS" 
+                                            class="btn btn-outline-success btn-set-status">Отменить отправку</button>
+                                                                                                  
                             
                                     break;
                                 }
                                 case MTaskStatus.COMPLETED:
                                 {
                                     <div class="row">
-                                        <a class="nav-link text-light" asp-area=""
-                                           asp-route-idTask="@Model.MTask.Id"
-                                           asp-route-status="@MTaskStatus.IN_PROGRESS"
-                                           asp-controller="MTask" asp-action="SetMTaskStatus">
-                                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                                                Вернуть задачу
-                                            </button>
-                                        </a>
+                                        <button type="button"
+                                                data-task-id="@Model.MTask.Id" data-task-status="@MTaskStatus.IN_PROGRESS" 
+                                                class="btn btn-outline-success btn-set-status">Вернуть задачу</button>
+                                        
                                     </div>
                             
                                     break;

@@ -14,4 +14,8 @@ public class MainMTaskPageViewModel
     
     [BindProperty]
     public BufferedSingleMultiplyFileUploadDb FileUpload { get; set; }
+    
+    public int SumCompletedTask { get; set; }
+    
+    public int SumNumCompletedTask { get; set; }
 }

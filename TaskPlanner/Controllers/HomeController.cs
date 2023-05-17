@@ -58,6 +58,29 @@ public class HomeController : Controller
         return View(model);
     }
     
+    [HttpPost]
+    
+    public async Task<IActionResult> SearchMTasks(string? search)
+    {
+        var email = User.Identity?.Name;
+
+        var user = await _context.Users
+            .Include(x => x.MTasks)
+            .Include(x => x.FavoriteMTasks)
+            .FirstOrDefaultAsync(x => x.Email == email);
+
+        var result = user.MTasks.Where(x => x.Title.ToLower()
+            .Contains(search == null ? "" : search.ToLower())).ToList();
+
+        var model = new SearchMTasksViewModel
+        {
+            User = user,
+            MTasksResult = result
+        };
+        
+        return View(model);
+    }
+    
 
     public IActionResult Privacy()
     {

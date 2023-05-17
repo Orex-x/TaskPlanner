@@ -16,6 +16,9 @@
                     contentType: false,
                     processData: false,
                     cache: false,
+                    success: function(response) {
+                      location.reload();
+                    }
                 });
             });
         });
@@ -95,7 +98,9 @@
                                     </div>
 
                                     <div style="margin-top: 10px">
-                                        <button type="button" data-task-id="@userTask.MTask.Id" data-task-status="@MTaskStatus.COMPLETED" class="btn btn-outline-success me-2 btn-set-status">Принять задачу</button>
+                                        <button type="button" data-task-id="@userTask.MTask.Id" 
+                                                data-task-status="@MTaskStatus.COMPLETED" 
+                                                class="btn btn-outline-success me-2 btn-set-status">Принять задачу</button>
                                         <button type="button" data-task-id="@userTask.MTask.Id" data-task-status="@MTaskStatus.IN_PROGRESS" class="btn btn-outline-danger btn-set-status">Вернуть задачу</button>
                                     </div>
                                 </div>

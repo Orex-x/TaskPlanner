@@ -104,7 +104,7 @@ public class MTaskController : Controller
                }
            }
        }
-       
+
        model.MTask.Original = true; 
        project.MTasks.Add(model.MTask);
 
@@ -138,12 +138,22 @@ public class MTaskController : Controller
         
         var author = _context.Users.FirstOrDefault(x => x.Email == task.AuthorEmail);
 
+        var sumCompleted = _context.MTasks
+            .Count(x => x.Code == task.Code & (x.MTaskStatus == MTaskStatus.SHIPPED 
+                        || x.MTaskStatus == MTaskStatus.COMPLETED) & x.Original == false);
+        
+        var sumNotCompleted = _context.MTasks
+            .Where(x => x.Code == task.Code & (x.MTaskStatus == MTaskStatus.NEW 
+                        || x.MTaskStatus == MTaskStatus.IN_PROGRESS) & x.Original == false);
+
         var model = new MainMTaskPageViewModel
         {
             MTask = task,
             isAuthor = task.AuthorEmail == email,
             Author = author!,
-            MainFiles = mainTask.PathToFiles
+            MainFiles = mainTask!.PathToFiles,
+            SumCompletedTask = sumCompleted,
+            SumNumCompletedTask = sumNotCompleted.Count(),
         };
         
         return View(model);
@@ -181,6 +191,10 @@ public class MTaskController : Controller
                     });
                 }
             }
+        }
+        else
+        {
+            task!.PathToFiles.Clear();
         }
         
         task.MTaskStatus = MTaskStatus.SHIPPED;
