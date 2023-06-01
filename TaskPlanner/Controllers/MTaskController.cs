@@ -160,6 +160,7 @@ public class MTaskController : Controller
     }
 
 
+    [HttpPost]
     public async Task<IActionResult> SetMTaskShipped(MainMTaskPageViewModel model)
     {
         var task = await _context.MTasks
